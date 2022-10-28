@@ -4,6 +4,7 @@ var userSchema = new mongoose.Schema({
     userName:String,
     password:String,
     email:String,
+    phoneNumber:String,
     address:String,
     Roles:String,
     products:[{
@@ -13,5 +14,5 @@ var userSchema = new mongoose.Schema({
     }],
     isDelete:Boolean
 },{timestamps:true});
-const UserSchema=mongoose.model("user_schema",userSchema);
-module.exports={UserSchema}
+const Users=mongoose.model("users",userSchema);
+module.exports={Users}

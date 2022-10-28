@@ -11,5 +11,5 @@ var productSchema=new mongoose.Schema({
     review:[String],
     isDelete:Boolean
 });
-const ProductSchema=mongoose.model('product_schema',productSchema);
-module.exports={ProductSchema}
+const Products=mongoose.model('products',productSchema);
+module.exports={Products}

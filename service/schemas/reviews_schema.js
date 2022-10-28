@@ -9,5 +9,5 @@ var reviewSchema=new mongoose.Schema({
     title:String,
     isDelete:Boolean
 },{timestamps:true});
-const ReviewSchema=mongoose.model("reviews_schema",reviewSchema);
-module.exports={ReviewSchema}
+const Reviews=mongoose.model("reviews",reviewSchema);
+module.exports={Reviews}

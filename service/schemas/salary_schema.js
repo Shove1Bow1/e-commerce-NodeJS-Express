@@ -8,5 +8,5 @@ var salarySchema=new mongoose.Schema({
     BillId:[String],
     isDelete:Boolean,
 })
-const SalarySchema=mongoose.model('salary_schema',salarySchema);
-module.exports={SalarySchema}
+const Salary=mongoose.model('salary',salarySchema);
+module.exports={Salary}

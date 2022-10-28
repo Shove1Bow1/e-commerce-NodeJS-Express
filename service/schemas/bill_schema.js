@@ -14,7 +14,7 @@ var billSchema = new mongoose.Schema({
     },
     isDelete:Boolean
 },{timestamps:true})
-const BillSchema=mongoose.model("bill_schema",billSchema);
+const Bills=mongoose.model("bills",billSchema);
 module.exports={
-    BillSchema
+    Bills
 }
