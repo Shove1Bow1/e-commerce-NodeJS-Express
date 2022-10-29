@@ -1,13 +1,18 @@
 const { Users } = require("../service/schemas/user_schema")
-
-function checkExist(userName,password){
-   const pwEncode= Buffer.from(password, 'base64').toString('base64')
-   const user= Users.findOne({userName,password:pwEncode})
-   if(user){
-    return false
-   }
-   else{
-    return true    
-   }
+const { messageRespone } = require('../ultis/messageRespone');
+async function CheckExist(req,res,next) {
+   const {userName,email}=req.body;
+   await Users.findOne({$or:[{ email: email},{userName: userName }]},(err,result)=>{
+      if(err){
+         console.log(err);
+         res.send(messageRespone("400"));
+      }
+      if(!result){
+         next();
+      }
+      else{
+         res.send(messageRespone("409"));
+      }
+   }).clone();
 }
-module.exports={checkExist}
+module.exports = { CheckExist }
