@@ -78,6 +78,9 @@ function FirstRegisterSender(userName, createdDay, email, recoverCode) {
     });
     return sendCode;
 }
+function OtpSender(userName,email,OtpCode){
+
+}
 module.exports = {
-    BillSender, FirstRegisterSender
+    BillSender, FirstRegisterSender,OtpSender
 }

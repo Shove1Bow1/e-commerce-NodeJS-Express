@@ -6,11 +6,11 @@ function AcceptIncomingReq(req,res,next){
         next();
     }
     else{
-        res.send(messageRespone("400"))
+        res.send({status:"missing authentication",message:false,messageResponse:messageRespone("400")})
         return;
     }
 }
-function MadeCode(length) {
+function GenerateRecoverCode(length) {
     var result           = '';
     var characters       = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
     var charactersLength = characters.length;
@@ -21,5 +21,5 @@ function MadeCode(length) {
 }
 
 module.exports={
-    AcceptIncomingReq,MadeCode
+    AcceptIncomingReq,GenerateRecoverCode
 }

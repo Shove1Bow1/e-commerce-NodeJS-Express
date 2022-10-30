@@ -11,7 +11,7 @@ async function CheckExist(req,res,next) {
          next();
       }
       else{
-         res.send(messageRespone("409"));
+         res.send({status:"email already been used",message:false,messageResponse:messageRespone("409")});
       }
    }).clone();
 }

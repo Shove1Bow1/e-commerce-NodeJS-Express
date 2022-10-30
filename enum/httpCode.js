@@ -4,6 +4,7 @@
     '200':'Success',
     '201':'Created',
     '202':'Accepted but not been completed',
-    '409':'Account conflict'
+    '409':'Account email or username is conflict',
+    '401':"Unauthorized"
 }
 module.exports = { HTTPMESSAGE }
