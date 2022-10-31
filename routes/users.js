@@ -12,7 +12,8 @@ router.get("/", function (req, res, next) {
 });
 router.post("/register", AcceptIncomingReq, CheckExist, async (req, res) => {
   if(!req.body.userName || !req.body.password || !req.body.phoneNumber || !req.body.address || !req.body.email){
-    res.send({status:"missing some info",message:false,messageResponse:messageRespone("400")})
+    res.send({status:"missing some info",message:false,messageResponse:messageRespone("400")});
+    return;
   }
   const { userName, password, phoneNumber, address, email } = req.body;
   const emailConvert=email.toLowerCase();
