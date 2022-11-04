@@ -1,4 +1,4 @@
-const { Users } = require("../service/schemas/user_schema")
+const { Users } = require("../service/collections/users")
 const { messageRespone } = require('../ultis/messageRespone');
 async function CheckExist(req,res,next) {
    const {email}=req.body;
