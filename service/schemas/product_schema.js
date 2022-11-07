@@ -1,6 +1,5 @@
 const {mongoose} = require("../mongoose_config");
 var productSchema=new mongoose.Schema({
-    productID:String,
     productName:String,
     quanity:{type:Number,min:0,max:200000},
     description:String,
@@ -9,7 +8,7 @@ var productSchema=new mongoose.Schema({
     price:{type:Number,min:1000,max:200000000},
     category:String,
     review:[String],
-    isDelete:Boolean
+    isDelete:{type:Boolean,default:false}
 });
 const Products=mongoose.model('products',productSchema);
 module.exports={Products}
