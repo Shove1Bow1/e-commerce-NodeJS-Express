@@ -2,41 +2,25 @@ var express = require("express");
 var router = express.Router();
 var uuidConverter = require('uuid');
 const crypto=require("crypto");
-var { Users } = require("../service/schemas/user_schema");
+var { Users } = require("../service/collections/users");
 var { AcceptIncomingReq, GenerateRecoverCode } = require("../service/function_config");
 const { CheckExist } = require("../ultis/checkExistUser");
 const { messageRespone } = require("../ultis/messageRespone");
 const { FirstRegisterSender } = require('../service/nodemailer_config');
 router.get("/", function (req, res, next) {
- Users.find({isDelete:false},(err,data)=>{
-  if(err)
-  res.send(messageRespone(400))
-  else
-  res.send(messageRespone(200,data))
-
- })
-});
-router.delete("/", function (req, res, next) {
- const {iduser}=req.headers
- console.log(req.headers)
-  Users.updateOne({idUser:iduser},{$set:{isDelete:true}},(err,data)=>{
-  if(err)
-  res.send(messageRespone(400))
-  else
-  res.send(messageRespone(200,{...data}))
-  
-  })
+  res.send("respond with a resource");
 });
 router.post("/register", AcceptIncomingReq, CheckExist, async (req, res) => {
   if(!req.body.userName || !req.body.password || !req.body.phoneNumber || !req.body.address || !req.body.email){
-    res.send({status:"missing some info",message:false,messageResponse:messageRespone("400")})
+    res.send({status:"missing some info",message:false,messageResponse:messageRespone("400")});
+    return;
   }
   const { userName, password, phoneNumber, address, email } = req.body;
   const emailConvert=email.toLowerCase();
   const pwHex = crypto.createHash("sha256").update(password).digest("hex");
-  const userId = uuidConverter.v1(userName);
+  const idUser = uuidConverter.v1(userName);
   const codeRecover = GenerateRecoverCode(5);
-  let doc = await Users.create({ idUser: userId, email: emailConvert, userName: userName, password: pwHex, address: address, roles: "normal_user", phoneNumber: phoneNumber, secretKey: codeRecover });
+  let doc = await Users.create({ idUser, email: emailConvert, userName: userName, password: pwHex, address: address, roles: "user", phoneNumber: phoneNumber, secretKey: codeRecover });
   doc.save();
   if (doc.createdAt) {
     try {
@@ -46,6 +30,7 @@ router.post("/register", AcceptIncomingReq, CheckExist, async (req, res) => {
         message:true,
         status:"welcome new user",
         idUser:userId,
+        userName:userName,
         messageRespone:messageRespone("200"),
       })
       return
@@ -59,9 +44,13 @@ router.post("/register", AcceptIncomingReq, CheckExist, async (req, res) => {
   }
 })
 router.post("/login", AcceptIncomingReq, async (req, res) => {
+  if(!req.body.email || !req.body.password){
+    res.send({status:"missing some info",message:false,messageResponse:messageRespone("400")});
+    return;
+  }
   const { email, password } = req.body;
   const pwHex = crypto.createHash("sha256").update(password).digest("hex");
-  await Users.findOne({ email: email, password: pwHex, roles: "normal_user" }, (err, result) => {
+  await Users.findOne({ email: email, password: pwHex, roles: "user" }, (err, result) => {
     if (err) {
       console.log(err)
     }
@@ -83,6 +72,10 @@ router.post("/login", AcceptIncomingReq, async (req, res) => {
    
 })
 router.post("/recover", AcceptIncomingReq,async (req, res) => {
+  if(!req.body.email || !req.body.secretCode){
+    res.send({status:"missing some info",message:false,messageResponse:messageRespone("400")});
+    return;
+  }
   const { email, secretCode } = req.body;
   const emailConvert=email.toLowerCase();
   await Users.findOne({ email: emailConvert, secretKey: secretCode }, (err, result) => {
@@ -114,6 +107,10 @@ router.post("/recover", AcceptIncomingReq,async (req, res) => {
     )
 })
 router.post("/forgot_password", AcceptIncomingReq, async (req, res) => {
+  if(!req.body.uuid || !req.body.newPassword){
+    res.send({status:"missing some info",message:false,messageResponse:messageRespone("400")});
+    return;
+  }
   const { uuid, newPassword } = req.body;
   const pwHex = crypto.createHash("sha256").update(newPassword).digest("hex");
   var result =await Users.updateOne({ idUser: uuid }, { $set: { password: pwHex } }, (err) => {
