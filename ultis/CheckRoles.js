@@ -1,4 +1,4 @@
-const { Users } = require("../service/schemas/user_schema");
+const { Users } = require("../service/collections/user_schema");
 const { messageRespone } = require("./messageRespone");
 
  async function checkRoles(res,req,next){

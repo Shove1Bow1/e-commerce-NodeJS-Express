@@ -1,7 +1,6 @@
 var express = require("express");
 var router = express.Router();
 require("dotenv").config();
-var {ShipementSchema}=require('../service/schemas/shipment_schema')
 /* GET home page. */
 router.get("/some", function (req, res, next) {
   res.render("index", { title: "Express" });

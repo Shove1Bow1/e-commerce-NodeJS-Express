@@ -1,8 +1,7 @@
 var express = require("express");
-const { Products } = require("../service/schemas/product_schema");
+const { Products } = require("../service/collections/products");
 var router = express.Router();
 require("dotenv").config();
-var {ShipementSchema}=require('../service/schemas/shipment_schema');
 const { messageRespone } = require("../ultis/messageRespone");
 
 /* GET home page. */
