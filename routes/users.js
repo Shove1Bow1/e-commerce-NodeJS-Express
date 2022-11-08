@@ -22,18 +22,17 @@ router.post("/register", AcceptIncomingReq, CheckExist, async (req, res) => {
   const codeRecover = GenerateRecoverCode(5);
   let doc = await Users.create({ email: emailConvert, userName: userName, password: pwHex, address: address, roles: "user", phoneNumber: phoneNumber, secretKey: codeRecover });
   doc.save();
-  await Users.findOne({ email: emailConvert },async (err, result) => {
+  await Users.findOne({ email: emailConvert }, async (err, result) => {
     if (err) {
       console.log(err);
     }
-    if (result){
-      req.id =await result._id.toString();
+    if (result) {
+      req.id = await result._id.toString();
     }
-      
+
   }).clone();
   if (doc.createdAt) {
     try {
-      console.log(req.id)
       let dateCreated = doc.createdAt[8] + doc.createdAt[9] + '/' + doc.createdAt[5] + doc.createdAt[6] + '/' + doc.createdAt[0] + doc.createdAt[1] + doc.createdAt[2] + doc.createdAt[3];
       FirstRegisterSender(userName, dateCreated, email, codeRecover);
       res.send({
@@ -88,7 +87,7 @@ router.post("/recover", AcceptIncomingReq, async (req, res) => {
   }
   const { email, secretCode } = req.body;
   const emailConvert = email.toLowerCase();
-  await Users.findOne({ email: emailConvert, secretKey: secretCode }, (err, result) => {
+  await Users.findOne({ email: emailConvert, secretKey: secretCode }, async (err, result) => {
     if (err) {
       console.log(err);
     }
@@ -100,7 +99,7 @@ router.post("/recover", AcceptIncomingReq, async (req, res) => {
         {
           status: "user exists",
           message: true,
-          idUser: result._id,
+          idUser: result._id.toString(),
           messageRespone: messageRespone("200"),
         }
       );
@@ -137,7 +136,7 @@ router.post("/forgot_password", AcceptIncomingReq, async (req, res) => {
   }
 })
 router.post("/update_password", AcceptIncomingReq, async (req, res) => {
-  if (!req.body.uuid || !req.body.newPassword || !req.body.oldPassword) {
+  if (!req.body.idUser || !req.body.newPassword || !req.body.oldPassword) {
     res.send({ status: "missing some info", message: false, messageResponse: messageRespone("400") });
     return;
   }
@@ -150,10 +149,43 @@ router.post("/update_password", AcceptIncomingReq, async (req, res) => {
     }
   }).clone();
   if (result.modifiedCount > 0) {
-    res.send({ status: "update success", isUpdate: true, response: messageRespone("200") })
+    res.send({ status: "cập nhật thành công", isUpdate: true, response: messageRespone("200") })
   }
   else {
-    res.send({ status: "update failed", isUpdate: false, response: messageRespone("400") })
+    res.send({ status: "cập nhật thất bại", isUpdate: false, response: messageRespone("400") })
   }
+})
+router.get("/retrieve_info", AcceptIncomingReq, async (req, res) => {
+  if (!req.headers.iduser) {
+    res.send({
+      status: "dont have info",
+      message: false,
+      messageResponse: messageRespone("400")
+    })
+    return;
+  }
+  const idUser = req.headers.iduser;
+  await Users.findById(idUser, { isDelete: false }, (err, result) => {
+    if (err) {
+      console.log(err);
+      return;
+    }
+    if (result) {
+      const { userName, address, phoneNumber, email } = result;
+      res.send({
+        status: "success retrieve info",
+        result: {
+          username: userName,
+          address: address,
+          phoneNumber: phoneNumber,
+          email: email,
+        },
+      })
+      return;
+    }
+  }).clone();
+})
+router.get("/update_info",AcceptIncomingReq,async(req,res)=>{
+
 })
 module.exports = router;
