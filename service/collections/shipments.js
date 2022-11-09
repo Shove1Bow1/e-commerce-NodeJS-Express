@@ -1,7 +1,7 @@
 require("dotenv").config();
 const {mongoose} = require('../mongoose_config');
 var shipmentSchema = new mongoose.Schema({
-    billId: String,
+    // billId: String,
     shipmentUnit:String,
     shipCode: String,
     isDelete: Boolean

@@ -1,6 +1,5 @@
 const {mongoose} = require('../mongoose_config');
 var billSchema = new mongoose.Schema({
-    billId: String,
     idUser:String,
     name:String,
     address:String,

@@ -1,6 +1,6 @@
 const {mongoose} = require('../mongoose_config');
 var userSchema = new mongoose.Schema({
-    idUser:String, 
+    // idUser:String, 
     userName:String,
     password:String,
     email:String,
