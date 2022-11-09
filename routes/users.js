@@ -15,12 +15,12 @@ router.post("/register", AcceptIncomingReq, CheckExist, async (req, res) => {
     res.send({ status: "missing some info", message: false, messageResponse: messageRespone("400") });
     return;
   }
-  const { userName, password, phoneNumber, address, email } = req.body;
+  const { userName, password, phoneNumber, address, email,addressId } = req.body;
   const emailConvert = email.toLowerCase();
   const pwHex = crypto.createHash("sha256").update(password).digest("hex");
   // const idUser = uuidConverter.v1(userName);
   const codeRecover = GenerateRecoverCode(5);
-  let doc = await Users.create({ email: emailConvert, userName: userName, password: pwHex, address: address, roles: "user", phoneNumber: phoneNumber, secretKey: codeRecover });
+  let doc = await Users.create({ email: emailConvert, userName: userName, password: pwHex, address: address, roles: "user", phoneNumber: phoneNumber, secretKey: codeRecover,addressId:addressId });
   doc.save();
   await Users.findOne({ email: emailConvert }, async (err, result) => {
     if (err) {
@@ -65,7 +65,7 @@ router.post("/login", AcceptIncomingReq, async (req, res) => {
     }
     if (!result) {
       req.checked = true;
-      res.send({ status: "failed to login", messageRespone: messageRespone("400") });
+      res.send({ status: "failed to login",message:false, messageRespone: messageRespone("400") });
     }
     else {
       res.send(
@@ -73,6 +73,8 @@ router.post("/login", AcceptIncomingReq, async (req, res) => {
           status: "welcome user",
           idUser: result._id.toString(),
           userName: result.userName,
+          addressId:result.addressId,
+          message:true,
           messageRespone: messageRespone("200"),
         });
       return;
@@ -140,10 +142,10 @@ router.post("/update_password", AcceptIncomingReq, async (req, res) => {
     res.send({ status: "missing some info", message: false, messageResponse: messageRespone("400") });
     return;
   }
-  const { uuid, newPassword, oldPassword } = req.body;
+  const { idUser, newPassword, oldPassword } = req.body;
   const oldPwHex = crypto.createHash("sha256").update(oldPassword).digest("hex");
   const newPwHex = crypto.createHash("sha256").update(newPassword).digest("hex");
-  var result = await Users.updateOne({ _id: uuid, password: oldPwHex }, { $set: { password: newPwHex } }, (err) => {
+  var result = await Users.updateOne({ _id: idUser, password: oldPwHex }, { $set: { password: newPwHex } }, (err) => {
     if (err) {
       console.log(err);
     }
@@ -156,7 +158,7 @@ router.post("/update_password", AcceptIncomingReq, async (req, res) => {
   }
 })
 router.get("/retrieve_info", AcceptIncomingReq, async (req, res) => {
-  if (!req.headers.iduser) {
+  if (!req.headers.iduser||req.headers.iduser.length<6) {
     res.send({
       status: "dont have info",
       message: false,
@@ -171,21 +173,48 @@ router.get("/retrieve_info", AcceptIncomingReq, async (req, res) => {
       return;
     }
     if (result) {
-      const { userName, address, phoneNumber, email } = result;
+      const { userName, address, phoneNumber, email,addressId } = result;
       res.send({
         status: "success retrieve info",
         result: {
           username: userName,
           address: address,
+          addressId:  addressId,
           phoneNumber: phoneNumber,
           email: email,
         },
+        messageRespone:messageRespone("200")
       })
       return;
     }
   }).clone();
 })
-router.get("/update_info",AcceptIncomingReq,async(req,res)=>{
-
+router.post("/update_info",AcceptIncomingReq,async(req,res)=>{
+  if(!req.body.addressId||!req.body.phoneNumber||!req.body.address||!req.body.userName||!req.headers.iduser||req.headers.iduser.length<6){
+    res.send({
+      status: "dont have info",
+      message: false,
+      messageResponse: messageRespone("400")
+    })
+    return;
+  }
+  const {addressId,phoneNumber,address,userName}=req.body;
+  const idUser=req.headers.iduser;
+  var doc=await Users.updateOne({_id:idUser},{addressId:addressId,userName:userName,address:address,phoneNumber:phoneNumber},(err)=>{
+    if(err){
+      console.log(err);
+      return;
+    }
+  }).clone();
+  if(doc.modifiedCount>0){
+    res.send({
+      status: "cập nhật thành công", isUpdate: true, response: messageRespone("200") 
+    })
+  }
+  else(
+    res.send({
+      status: "cập nhật thất bại", isUpdate: true, response: messageRespone("400") 
+    })
+  )
 })
 module.exports = router;

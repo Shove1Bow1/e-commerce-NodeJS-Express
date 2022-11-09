@@ -13,6 +13,7 @@ var userSchema = new mongoose.Schema({
         status:Boolean
     }],
     secretKey:String,
+    addressId:String,
     isDelete:Boolean
 },{timestamps:true});
 const Users=mongoose.model("users",userSchema);
