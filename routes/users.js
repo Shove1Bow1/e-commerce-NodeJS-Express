@@ -8,7 +8,24 @@ const { CheckExist } = require("../ultis/checkExistUser");
 const { messageRespone } = require("../ultis/messageRespone");
 const { FirstRegisterSender } = require('../service/nodemailer_config');
 router.get("/", function (req, res, next) {
-  res.send("respond with a resource");
+ Users.find({isDelete:false},(err,data)=>{
+  if(err)
+  res.send(messageRespone(400))
+  else
+  res.send(messageRespone(200,data))
+
+ })
+});
+router.delete("/", function (req, res, next) {
+ const {iduser}=req.headers
+ console.log(req.headers)
+  Users.updateOne({idUser:iduser},{$set:{isDelete:true}},(err,data)=>{
+  if(err)
+  res.send(messageRespone(400))
+  else
+  res.send(messageRespone(200,{...data}))
+  
+  })
 });
 router.post("/register", AcceptIncomingReq, CheckExist, async (req, res) => {
   if (!req.body.userName || !req.body.password || !req.body.phoneNumber || !req.body.address || !req.body.email) {

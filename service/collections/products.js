@@ -1,6 +1,9 @@
 const {mongoose} = require("../mongoose_config");
 var productSchema=new mongoose.Schema({
+<<<<<<< HEAD
+=======
     // productID:String,
+>>>>>>> a36657f7b2146ea87da7efeb3ad681315514a20f
     productName:String,
     quanity:{type:Number,min:0,max:200000},
     description:String,
@@ -8,6 +11,7 @@ var productSchema=new mongoose.Schema({
     starQuality:{type:Number,min:0,max:5},
     price:{type:Number,min:1000,max:200000000},
     category:String,
+    isDelete:{type:Boolean,default:false},
     reviews:[{
         dateReview:{type:Date, default:Date.now},
         name:String,
@@ -20,7 +24,6 @@ var productSchema=new mongoose.Schema({
     newStocks:[{
 
     }],
-    isDelete:Boolean
 });
 const Products=mongoose.model('products',productSchema);
 module.exports={Products}
