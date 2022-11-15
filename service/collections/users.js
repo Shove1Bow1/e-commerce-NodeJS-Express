@@ -5,7 +5,12 @@ var userSchema = new mongoose.Schema({
     password:String,
     email:String,
     phoneNumber:String,
-    address:String,
+    address:{
+    street:String,
+   cityId: { value: String, label: String },
+    districtId: { value: String, label: String },
+    wardId: { value: String, label: String },
+    },
     roles:String,
     products:[{
         productId:[String],
@@ -13,6 +18,7 @@ var userSchema = new mongoose.Schema({
         status:Boolean
     }],
     secretKey:String,
+    verify:Boolean,
     isDelete:Boolean
 },{timestamps:true});
 const Users=mongoose.model("users",userSchema);
