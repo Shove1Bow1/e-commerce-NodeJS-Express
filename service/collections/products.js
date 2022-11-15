@@ -1,5 +1,6 @@
 const {mongoose} = require("../mongoose_config");
 var productSchema=new mongoose.Schema({
+    // productID:String,
     productName:String,
     quanity:{type:Number,min:0,max:200000},
     description:String,
