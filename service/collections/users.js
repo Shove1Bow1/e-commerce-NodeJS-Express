@@ -12,8 +12,10 @@ var userSchema = new mongoose.Schema({
         quanityProduct:[{type:Number,min:1,max:200}],
         status:Boolean
     }],
+    modifyPasswordTime:{type:Number, default:0},
     secretKey:String,
     addressId:String,
+    verify:{type:Boolean,default:false},
     isDelete:Boolean
 },{timestamps:true});
 const Users=mongoose.model("users",userSchema);

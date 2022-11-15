@@ -1,50 +1,110 @@
 var express = require("express");
 const { Products } = require("../service/collections/products");
+const { Users } = require("../service/collections/users");
+const { AcceptIncomingReq } = require("../service/function_config");
 var router = express.Router();
 require("dotenv").config();
 const { messageRespone } = require("../ultis/messageRespone");
 
 /* GET home page. */
-router.get("/", function (req, res, next) {
+router.get("/all", AcceptIncomingReq, function (req, res) {
   Products.find({ isDelete: false }, (err, data) => {
     if (err)
       res.send(messageRespone(400))
-    else
+    else {
+      console.log(data);
       res.send(messageRespone(200, data))
+    }
+
 
   })
 });
-router.get("/:id", function (req, res, next) {
-  const id = req.params.id;
-  Products.findOne({ isDelete: false, _id: id }, (err, data) => {
-    if (err)
-      res.send(messageRespone(400))
-    else
-      res.send(messageRespone(200, data))
+// router.get("/:id", AcceptIncomingReq, function (req, res) {
+//   const id = req.params.id;
+//   Products.findOne({ isDelete: false, _id: id }, (err, data) => {
+//     if (err)
+//       res.send(messageRespone(400))
+//     else
+//       res.send(messageRespone(200, data))
 
-  })
-});
-router.post("/", function (req, res, next) {
-  Products.create({ ...req.body })
-  res.send(messageRespone(200));
-});
-router.delete("/", function (req, res, next) {
-  const { id } = req.headers
+//   })
+// });
+// router.post("/bla", AcceptIncomingReq, function (req, res) {
+//   Products.create({ ...req.body })
+//   res.send(messageRespone(200));
+// });
+// router.delete("/", AcceptIncomingReq, function (req, res) {
+//   const { id } = req.headers
+//   console.log(req.headers)
+//   Users.updateOne({ _id: id }, { $set: { isDelete: true } }, (err, data) => {
+//     if (err)
+//       res.send(messageRespone(400))
+//     else
+//       res.send(messageRespone(200, { ...data }))
+//   })
+// });
+router.get("/by_category", async (req, res) => {
   console.log(req.headers)
-  Users.updateOne({ _id: id }, { $set: { isDelete: true } }, (err, data) => {
-    if (err)
-      res.send(messageRespone(400))
-    else
-      res.send(messageRespone(200, { ...data }))
-  })
-});
-router.get("/", function (req, res, next) {
-  Products.find((err, data) => {
-    if (err)
-      res.send(messageRespone(400));
-    else
-      res.send(messageRespone(200, data));
-
-  })
-});
+  if (!req.headers.category || req.headers.category.length < 3) {
+    res.send({
+      status: "missing some info", message: false, messageResponse: messageRespone("400")
+    })
+    return;
+  }
+  const { category } = req.headers;
+  await Products.find({ category: category }, async (err, result) => {
+    if (err) {
+      console.log(err)
+      res.send({ status: "error in server", messageResponse: messageRespone("400") });
+      return;
+    }
+    if (result.length === 0) {
+      res.send({ status: "no result", messageResponse: messageRespone("200") });
+      return;
+    }
+    else {
+      console.log(result);
+      res.send({
+        status: "success retrieve category",
+        data: result,
+        messageRespone: messageRespone("200"),
+      })
+      return;
+    }
+  }).clone();
+})
+router.get("/by_filter",AcceptIncomingReq,async(req,res)=>{
+  if(!req.headers.star){
+    var {max_price,min_price}=req.headers;
+    Products.find({price:{$lt:max_price,$gt:min_price}},(err,result)=>{
+      if(err){
+        console.log(err)
+        res.send(messageRespone("400"));
+        return;
+      }
+      if(!result){
+        res.send({messageResponse:messageRespone("200"),data:result,status:"Không có kết quả"})
+      }
+      else{
+        res.send({messageRespone:messageRespone("200"),data:result,status:"có kết quả"});
+      }
+    }).clone();
+  }
+  else{
+    var {max_price,min_price,star}=req.headers;
+    await star.sort();
+    Products.find({price:{$lt:max_price,$gt:min_price},starQuality:{$gt:star[star.length-1],$lt:[0]}},async (err,result)=>{
+      if(err){
+        console.log(err);
+        return;
+      }
+      if(!result){
+        res.send({messageResponse:messageRespone("200"),data:result,status:"Không có kết quả"})
+      }
+      else{
+        res.send({messageRespone:messageRespone("200"),data:result,status:"có kết quả"});
+      }
+    }).clone();
+  }
+})
 module.exports = router;

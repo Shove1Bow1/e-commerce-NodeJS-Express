@@ -39,15 +39,14 @@ async function BillSender(userName, totalPaid, email, paidDate) {
     })
     return billSender;
 }
-function FirstRegisterSender(userName, createdDay, email, recoverCode) {
+function FirstRegisterSender(userName, createdDay, email) {
     var mailOptions = {
         from: process.env.EMAIL_MAILER,
         to: email,
         subject: "chào mừng người dùng " + userName,
         template: 'register',
         context: {
-          userName: userName,
-          recoverCode: recoverCode
+          userName: userName
         }
       };
     var sendCode=mailler.sendMail(mailOptions,(err)=>{
@@ -57,9 +56,41 @@ function FirstRegisterSender(userName, createdDay, email, recoverCode) {
     })
     return sendCode;
 }
-function OtpSender(userName,email,OtpCode){
-
+function OtpSender(userName,email,otpCode){
+    var mailOptions={
+        from: process.env.EMAIL_MAILER,
+        to:email,
+        subject: "Mã otp phục hồi",
+        template: 'recover_otp',
+        context:{
+            email:email,
+            OTP:otpCode,
+        }
+    }
+    var sendCode=mailler.sendMail(mailOptions,(err)=>{
+        if(err)
+            console.log(err);
+    })
+    return sendCode;
+}
+function MailRecoverSender(email,recoverCode,id){
+    var mailOptions={
+        from: process.env.EMAIL_MAILER,
+        to:email,
+        subject: "Phục hồi bằng email",
+        template: 'recover_email',
+        context:{
+            email:email,
+            recoverCode:recoverCode,
+            id:id,
+        }
+    }
+    var sendCode=mailler.sendMail(mailOptions,(err)=>{
+        if(err)
+            console.log(err);
+    })
+    return sendCode;
 }
 module.exports = {
-    BillSender, FirstRegisterSender,OtpSender
+    BillSender, FirstRegisterSender,OtpSender,MailRecoverSender
 }

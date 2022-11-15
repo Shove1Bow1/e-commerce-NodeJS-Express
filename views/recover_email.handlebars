@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<head>
+    <style>
+       .container{
+            min-width: 40%;
+            max-width: 60%;
+            min-height: auto;
+            display: flex;
+            flex-direction: row;
+            margin:auto;
+            padding: 20px;
+            text-align: center;
+            border: 2px solid black;
+            justify-content: center;
+        }
+        h3{
+            font-size:20px;
+        }
+        .direct-to-change{
+            text-align: center;
+            font-size: 16px;
+            font-weight: 600;
+            max-width: 10rem;
+            margin: auto;
+            padding: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h3>
+            Đây là thư phục hồi tài khoản {{email}}
+        </h3>
+        <h3>
+            Nhấn vào nút ở trang bên dưới để đến nơi đổi mật khẩu, lưu ý việc đổi mật khẩu chỉ có 1 trong 2 phương thức là otp qua hoặc recover bằng email
+        </h3>
+        <a href="http://localhost:3000/forgotpassword/{{recoverCode}}/{{id}}">Link đến trang đổi mật khẩu</a>
+        <h5>Trang này chỉ phục vụ cho việc thay đổi mật khẩu</h5>
+    </div>
+    {{!-- <script>
+        var elemnet=document.getElementsByClassName("direct-to-change")[0];
+        elemnet.addEventListener("click",ChangeDirection);
+        function ChangeDirection(){
+            window.location.assign(`http://localhost:1402/recover/`+{{recoverCode}})
+        }
+    </script> --}}
+</body>
