@@ -31,12 +31,12 @@ router.post("/register", AcceptIncomingReq, CheckExist, async (req, res) => {
     res.send({ status: "missing some info", message: false, messageResponse: messageRespone("400") });
     return;
   }
-  const { userName, password, phoneNumber, address, email,addressId } = req.body;
+  const { userName, password, phoneNumber, address, email,addressId,cityId,districtId,wardId } = req.body;
   const emailConvert = email.toLowerCase();
   const pwHex = crypto.createHash("sha256").update(password).digest("hex");
   // const idUser = uuidConverter.v1(userName);
   // const codeRecover = GenerateRecoverCode(5);
-  let doc = await Users.create({ email: emailConvert, userName: userName, password: pwHex, address: address, roles: "user", phoneNumber: phoneNumber,addressId:addressId });
+  let doc = await Users.create({ email: emailConvert, userName: userName, password: pwHex, address: address, roles: "user", phoneNumber: phoneNumber,addressId:addressId,cityId:cityId,districtId:districtId,wardId:wardId });
   doc.save();
   await Users.findOne({ email: emailConvert }, async (err, result) => {
     if (err) {

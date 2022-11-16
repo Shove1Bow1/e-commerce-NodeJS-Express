@@ -5,7 +5,7 @@ var productSchema=new mongoose.Schema({
     quanity:{type:Number,min:0,max:200000},
     description:String,
     image:String,
-    starQuality:{type:Number,min:0,max:5},
+    quality:{type:Number,min:0,max:5},
     price:{type:Number,min:1000,max:200000000},
     category:String,
     isDelete:{type:Boolean,default:false},

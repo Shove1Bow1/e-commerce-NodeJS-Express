@@ -74,7 +74,7 @@ router.get("/by_category", async (req, res) => {
   }).clone();
 })
 router.get("/by_filter",AcceptIncomingReq,async(req,res)=>{
-  if(!req.headers.star){
+  if(req.headers.star.length===0){
     var {max_price,min_price}=req.headers;
     Products.find({price:{$lt:max_price,$gt:min_price}},(err,result)=>{
       if(err){
@@ -82,6 +82,7 @@ router.get("/by_filter",AcceptIncomingReq,async(req,res)=>{
         res.send(messageRespone("400"));
         return;
       }
+      console.log(result);
       if(!result){
         res.send({messageResponse:messageRespone("200"),data:result,status:"Không có kết quả"})
       }
@@ -92,8 +93,13 @@ router.get("/by_filter",AcceptIncomingReq,async(req,res)=>{
   }
   else{
     var {max_price,min_price,star}=req.headers;
-    await star.sort();
-    Products.find({price:{$lt:max_price,$gt:min_price},starQuality:{$gt:star[star.length-1],$lt:[0]}},async (err,result)=>{
+    console.log(req.headers);
+    const newStar=JSON.parse(star);
+    console.log(newStar);
+    await newStar.sort();
+    const start=newStar[0];
+    const end=newStar[newStar.length-1];
+    Products.find({price:{$lt:max_price,$gt:min_price},quality:{$gt:start,$lt:end}},async (err,result)=>{
       if(err){
         console.log(err);
         return;
@@ -102,6 +108,7 @@ router.get("/by_filter",AcceptIncomingReq,async(req,res)=>{
         res.send({messageResponse:messageRespone("200"),data:result,status:"Không có kết quả"})
       }
       else{
+        console.log(result);
         res.send({messageRespone:messageRespone("200"),data:result,status:"có kết quả"});
       }
     }).clone();
