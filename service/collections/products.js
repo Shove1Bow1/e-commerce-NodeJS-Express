@@ -19,7 +19,7 @@ var productSchema=new mongoose.Schema({
         isDelete:Boolean
     }],
     newStocks:[{
-
+        
     }],
 });
 const Products=mongoose.model('products',productSchema);

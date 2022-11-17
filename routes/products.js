@@ -19,16 +19,18 @@ router.get("/all", AcceptIncomingReq, function (req, res) {
 
   })
 });
-// router.get("/:id", AcceptIncomingReq, function (req, res) {
-//   const id = req.params.id;
-//   Products.findOne({ isDelete: false, _id: id }, (err, data) => {
-//     if (err)
-//       res.send(messageRespone(400))
-//     else
-//       res.send(messageRespone(200, data))
+router.get("/by_id/:id", AcceptIncomingReq, function (req, res) {
+  const id = req.params.id;
+  Products.findOne({ isDelete: false, _id: id }, (err, data) => {
+    if (err)
+      res.send(messageRespone(400))
+    else{
+      res.send(messageRespone(200, data))
 
-//   })
-// });
+    }
+
+  })
+});
 // router.post("/bla", AcceptIncomingReq, function (req, res) {
 //   Products.create({ ...req.body })
 //   res.send(messageRespone(200));

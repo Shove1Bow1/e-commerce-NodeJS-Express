@@ -36,7 +36,7 @@ router.post("/register", AcceptIncomingReq, CheckExist, async (req, res) => {
   const pwHex = crypto.createHash("sha256").update(password).digest("hex");
   // const idUser = uuidConverter.v1(userName);
   // const codeRecover = GenerateRecoverCode(5);
-  let doc = await Users.create({ email: emailConvert, userName: userName, password: pwHex, address: address, roles: "user", phoneNumber: phoneNumber,addressId:addressId,cityId:cityId,districtId:districtId,wardId:wardId });
+  let doc = await Users.create({ email: emailConvert, userName: userName, password: pwHex , roles: "user",address:{cityId:cityId,districtId:districtId,wardId:wardId,street: address}, phoneNumber: phoneNumber,addressId:addressId, });
   doc.save();
   await Users.findOne({ email: emailConvert }, async (err, result) => {
     if (err) {
@@ -210,14 +210,19 @@ router.get("/retrieve_info", AcceptIncomingReq, async (req, res) => {
       return;
     }
     if (result) {
+      console.log(result);
       const { userName, address, phoneNumber, email,addressId } = result;
+      const {street,wardId,cityId,districtId}=address;
       res.send({
         status: "success retrieve info",
         result: {
-          username: userName,
-          address: address,
+          userName: userName,
+          address: street,
           addressId:  addressId,
           phoneNumber: phoneNumber,
+          cityId:cityId,
+          wardId:wardId,
+          districtId:districtId,
           email: email,
         },
         messageRespone:messageRespone("200")
@@ -235,9 +240,9 @@ router.post("/update_info",AcceptIncomingReq,async(req,res)=>{
     })
     return;
   }
-  const {addressId,phoneNumber,address,userName}=req.body;
+  const {addressId,phoneNumber,address,userName,cityId,districtId,wardId}=req.body;
   const idUser=req.headers.iduser;
-  var doc=await Users.updateOne({_id:idUser},{addressId:addressId,userName:userName,address:address,phoneNumber:phoneNumber},(err)=>{
+  var doc=await Users.updateOne({_id:idUser},{addressId:addressId,userName:userName,street:address,phoneNumber:phoneNumber,cityId:cityId,districtId:districtId,wardId:wardId},(err)=>{
     if(err){
       console.log(err);
       return;
