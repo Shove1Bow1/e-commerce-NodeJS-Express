@@ -12,11 +12,8 @@ router.get("/all", AcceptIncomingReq, function (req, res) {
     if (err)
       res.send(messageRespone(400))
     else {
-      console.log(data);
       res.send(messageRespone(200, data))
     }
-
-
   })
 });
 router.get("/by_id/:id", AcceptIncomingReq, function (req, res) {

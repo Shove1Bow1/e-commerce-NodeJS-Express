@@ -6,6 +6,7 @@ const HTTPMESSAGE = {
    '202': 'Accepted but not been completed',
    '409': 'Account email or username is conflict',
    '401': "Unauthorized",
-   '403': "Forbidden"
+   '403': "Forbidden",
+   "500":"froze server"
 }
 module.exports = { HTTPMESSAGE }
