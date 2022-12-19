@@ -29,13 +29,36 @@ const handlebarOptions = {
     extName: ".handlebars",
   }
 mailler.use('compile',hbs(handlebarOptions));
-async function BillSender(userName, totalPaid, email, paidDate) {
-    var billSender = await mailler.sendMail({
-        from: process.env.EMAIL_MAILER,
+async function BillSender(userName, email, paidDate,products,billId,totalPrice) {
+    console.log(products);
+    const lengthProduct=products.length;
+    var productName=[],productQuanity=[];
+    for(var i=0;i<lengthProduct;i++){
+        productName.push(products[i].productName);
+        productQuanity.push(products[i].quantity);
+    }
+    var slicePaidDate=paidDate.split("-");
+    var newShipmentDate=Number(slicePaidDate[0])+1;
+    var shipmentDate=newShipmentDate.toString()+"-"+slicePaidDate[1]+"-"+slicePaidDate[2];
+    var mailOptions={
+        from:process.env.EMAIL_MAILER,
         to: email,
-        subject: "Hoá đơn điện tử của người dùng " + userName,
-        text: "Hoá đơn cho ngày " + paidDate,
-        html: ""
+        subject: "Hoá đơn điện tử của "+userName,
+        template: 'bill',
+        context:{
+            productNames:productName,
+            productQuanity:productQuanity,
+            paymentId:billId,
+            shipmentDate:shipmentDate,
+            paidDate:paidDate,
+            totalPaid:totalPrice
+        }
+    }
+    var billSender=mailler.sendMail(mailOptions,(err)=>{
+        if(err){
+            console.log(err);
+            return;
+        }
     })
     return billSender;
 }

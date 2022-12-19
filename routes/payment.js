@@ -6,6 +6,9 @@ const { default: axios } = require("axios");
 const { default: postSlack } = require("../ultis/postSlack");
 const { messageBill } = require("../enum/messageBill");
 const { response } = require("express");
+const { AcceptIncomingReq } = require("../service/function_config");
+const { BillSender } = require("../service/nodemailer_config");
+const e = require("express");
 var router = express.Router();
 require("dotenv").config();
 const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY);
@@ -105,21 +108,144 @@ router.post("/create", async function (req, res, next) {
     })
   }
 });
-
+router.get("/bills", AcceptIncomingReq, async (req, res) => {
+  if (!req.headers.iduser) {
+    res.send(messageRespone("401"));
+    return;
+  }
+  Bills.find({ idUser: req.headers.iduser, confirmStripe: true }, async (err, result) => {
+    if (err) {
+      console.log(err);
+      res.send(messageRespone("401"));
+      return;
+    }
+    console.log(result);
+    if (result) {
+      res.send(messageRespone("200", result))
+    }
+    else
+      res.send(messageRespone("201"));
+  })
+})
+router.get("/bill", AcceptIncomingReq, async (req, res) => {
+  if (!req.headers.iduser && !req.headers.billid) {
+    res.send(messageRespone("401"));
+    return;
+  }
+  const { iduser, billid } = req.headers
+  Bills.find({ idUser: iduser, _id: billid }, (err, result) => {
+    if (err) {
+      console.log(err);
+      res.send(messageRespone("401"));
+      return;
+    }
+    console.log(result);
+    if (result) {
+      res.send(messageRespone("200", result))
+    }
+    else
+      res.send(messageRespone("201"));
+  })
+})
 router.post("/confirm", async function (req, res, next) {
-  console.log(req.body);
-  await Bills.updateMany({client_secret:req.body.confirmCode},{$set:{confirmStripe:true}},(err)=>{
-    if(err){
+  await Bills.updateMany({ client_secret: req.body.confirmCode }, { $set: { confirmStripe: true } }, (err,result) => {
+    if (err) {
       console.log(err)
       res.send(messageRespone("500"))
       return;
     }
     res.send(messageRespone(200));
+    console.log(result);
+    return;
   }).clone();
- 
+ await Bills.find({client_secret: req.body.confirmCode},async (err,result)=>{
+  if (err) {
+    console.log(err)
+    res.send(messageRespone("500"))
+    return;
+  }
+  console.log(result)
+  const datePaid=result[0].createdAt.getDate()+"-"+result[0].createdAt.getMonth()+"-"+result[0].createdAt.getFullYear();
+  axios({
+    method:"get",
+    url:"http://localhost:1402/payments/sent_bill",
+    headers:{
+      token:process.env.FRONT_END_TOKEN,
+      confirmcode:req.body.confirmCode,
+      datepaid:datePaid
+    }
+  })
+  return;
+ }).clone();
 });
-router.post("/delete_user",async function(req,res){
-  await Bills.deleteMany({userId:req.body.userId},(err)=>{
+router.get("/sent_bill", AcceptIncomingReq, async (req, res) => {
+  if (req.headers.products) {
+    const { products, username, billid, paymentdate, userid } = req.headers;
+    await Users.findOne({
+      _id: userid
+    }, (err, result) => {
+      if (err) {
+        console.log(err);
+        res.send(messageRespone("401"));
+        return;
+      }
+      if (result) {
+        req.email = result.email;
+      }
+    }).clone();
+    await Bills.findOne({
+      _id: billid
+    }, (err, result) => {
+      if (err) {
+        console.log(err);
+        res.send(messageRespone("401"));
+        return;
+      }
+      if (result) {
+        BillSender(username, req.email, paymentdate, result.products, billid, result.totalPrice);
+      }
+      else
+        return;
+    }).clone();
+    res.end();
+  }
+  else{
+    console.log(req.headers)
+    const {confirmcode,datepaid}=req.headers;
+    console.log(datepaid);
+    await Bills.findOne({client_secret:confirmcode},async(err,result)=>{
+      if(err){
+        console.log(err);
+        res.send(messageRespone("401"));
+        return;
+      }
+      if(result){
+        req.idUser=result.idUser;
+        req.products=result.products;
+        req.billId=result._id;
+        req.totalPrice=result.totalPrice;
+        // req.dateCreate=result.createdAt;
+      }
+    }).clone();
+    // req.dateCreate=await docs.createdAt;
+    // console.log("datecreate",dateCreate);
+    await Users.findOne({
+      _id: req.idUser
+    }, (err, result) => {
+      if (err) {
+        console.log(err);
+        res.send(messageRespone("401"));
+        return;
+      }
+      if (result) {
+        BillSender(result.userName, result.email, datepaid, req.products, req.billId, req.totalPrice);
+      }
+    }).clone();
+    res.end();
+  }
+})
+router.post("/delete_user", async function (req, res) {
+  await Bills.deleteMany({ userId: req.body.userId }, (err) => {
     res.send("done");
   }).clone();
 })

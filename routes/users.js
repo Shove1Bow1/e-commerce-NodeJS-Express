@@ -92,6 +92,7 @@ router.post("/login", AcceptIncomingReq, async (req, res) => {
           userId: result._id.toString(),
           userName: result.userName,
           addressId:result.addressId,
+          products:result.products,
           isAuth:true,
           messageRespone: messageRespone("200"),
         });
@@ -210,7 +211,6 @@ router.get("/retrieve_info", AcceptIncomingReq, async (req, res) => {
       return;
     }
     if (result) {
-      console.log(result);
       const { userName, address, phoneNumber, email,addressId } = result;
       const {street,wardId,cityId,districtId}=address;
       res.send({
@@ -260,7 +260,6 @@ router.post("/update_info",AcceptIncomingReq,async(req,res)=>{
   )
 })
 router.post("/verify",AcceptIncomingReq,async(req,res)=>{
-  console.log(req.body)
   if(!req.body.userId){
     res.send({status: "missing some info", message: false, messageResponse: messageRespone("400") });
     return
@@ -270,6 +269,7 @@ router.post("/verify",AcceptIncomingReq,async(req,res)=>{
     if(err){
       console.log(err);
       res.send(messageRespone("400"))
+      return;
     }
   }).clone();
   if(doc.modifiedCount>0){
@@ -279,6 +279,27 @@ router.post("/verify",AcceptIncomingReq,async(req,res)=>{
       messageRespone:messageRespone("200")
     })
   }
+})
+router.post("/login_admin",AcceptIncomingReq,async(req,res)=>{
+  if(req.body.email||req.body.password){
+    res.send({status: "missing some info", message: false, messageResponse: messageRespone("400") });
+    return;
+  }
+  const {email,password}=req.body;
+  await Users.find({email:email,password:password,roles:"admin"},async (err,result)=>{
+    if(err){
+      console.log(err);
+      res.send(messageRespone("401"));
+      return;
+    }
+    if(result){
+      res.send({messageResponse:messageRespone("200"),status:result,message:true});
+      return;
+    }
+    else  
+      res.send({messageRespone:messageRespone("200"),status:"account not exist",message:false});
+      return;
+  })
 })
 // router.get("/check_code",AcceptIncomingReq,async(req,res)=>{
 //   if(!req.headers.recover_code||req.headers.recover_code.length<0){

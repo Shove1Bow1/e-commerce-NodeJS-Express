@@ -13,9 +13,8 @@ var userSchema = new mongoose.Schema({
     },
     roles:String,
     products:[{
-        productId:[String],
+        productId:String,
         quanityProduct:[{type:Number,min:1,max:200}],
-        status:Boolean
     }],
     modifyPasswordTime:{type:Number, default:0},
     secretKey:String,
