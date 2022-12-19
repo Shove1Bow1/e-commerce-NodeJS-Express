@@ -66,7 +66,11 @@
             max-width: 80%;
         }
     </style>
-
+    <script>
+        function ChangeDirection(){
+            window.location.assign("http://localhost:3000/verify")
+        }
+    </script>
 </head>
 
 <body>
@@ -74,19 +78,20 @@
         <div id="header">
             <h3 id="title-user">Chào mừng người dùng đến với shop NHT, {{userName}}</h3>
         </div>
-        <p id="description">Với Tài khoản gmail này bạn đã đồng ý với một số điều khoản của công ty chúng tôi, dưới đây
-            là mã phục hồi dành cho bạn nếu bạn quên mật khẩu cũ, hãy giữ bí mật về mã này</p>
-        <p id="recover-code">Mã phục hồi: {{recoverCode}}</p>
-        <a id="direct-to-website" href="/">
+        <p id="description">Với Tài khoản gmail này bạn đã đồng ý với một số điều khoản của công ty chúng tôi, dưới đây là bước xác thực tài khoản người dùng, vui lòng nhấn nút xác thực</p>
+        <a id="direct-to-website" href="http://localhost:3000/verify">
             <div class="text-line">
                 <p style="padding: 1rem;">
-                    Đến Shop NHT
+                    Xác thực tài khoản
                 </p>
             </div>
         </a>
         <div id="footer">
-            <p id="footer-description">Đây là thư chào mừng bạn đến với shop, thư này chỉ đi kèm mã code, vui lòng giữ
+            <p id="footer-description">Đây là thư chào mừng bạn đến với shop, vui lòng giữ
                 thư để có thể bảo mật tài khoản tốt hơn</p>
         </div>
     </div>
+    <script>
+        
+    </script>
 </body>

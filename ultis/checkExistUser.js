@@ -2,11 +2,12 @@ const { Users } = require("../service/collections/users")
 const { messageRespone } = require('../ultis/messageRespone');
 async function CheckExist(req,res,next) {
    const {email}=req.body;
-   await Users.findOne({$or:[{ email: email}]},(err,result)=>{
+   await Users.findOne({ email: email},(err,result)=>{
       if(err){
          console.log(err);
          res.send(messageRespone("400"));
       }
+      console.log(result);
       if(!result){
          next();
       }

@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<head>
+
+</head>
+
+<body>
+    <h1>Hoá đơn mã: {{paymentId}}</h1>
+    <p>Sản phẩm mua ngày {{paidDate}}</p>
+    <p>Ngày vận chuyển {{shipmentDate}}</p>
+    <h3>Sản phẩm bao gồm</h3>
+    <ol>
+        {{#each productNames}}
+        <li>
+            Tên Sản phẩm:{{this}}
+        </li>
+        {{/each}}
+    </ol>
+    <h3>Số lượng sản phẩm tương ứng như với từng thứ tự Sản phẩm bên trên:</h3>
+        <ol>
+            {{#each productQuanity}}
+            <li>
+                Số lượng sản phẩm:{{this}}
+            </li>
+            {{/each}}
+        </ol>
+    
+    <p>Tổng giá tiền: {{totalPaid}}</p>
+    <p>Được vận chuyển bởi shop NHT</p>
+</body>

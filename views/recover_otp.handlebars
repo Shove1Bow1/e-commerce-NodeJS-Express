@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<head>
+    <style>
+        .container{
+            min-width: 50%;
+            max-width: 60%;
+            min-height: auto;
+            display: flex;
+            flex-direction: column;
+            margin:auto;
+            padding: 20px;
+            text-align: center;
+            border: 2px solid black;
+        }
+        .otp{
+            min-width: 30%;
+            letter-spacing: 18px;
+            margin:12px 10px;
+            font-weight: 700;
+            color: rgb(73, 75, 73);
+            font-size: 18px;
+        }
+        h3{
+            font-size:20px;
+        }
+        .note{
+            font-size: 12px;
+            font-weight: 700;
+            color: rgb(110, 108, 108);
+        }
+        .fan{
+            margin: auto;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h3>
+            Mã phục hồi OTP cho tài khoản, {{email}}
+        </h3>
+        <h3>
+           Đây là thư phục hồi mật khẩu dưới đây là mã OTP, xin đừng chia sẻ mã otp với bất kỳ ai khác:  
+        </h3>
+        <h4 class="otp">
+            {{OTP}}
+        </h4>
+        <p class="note">
+            Đây là thư được gửi từ trang web NHT
+        </p>
+        <img alt="this is a fan" src="https://firebasestorage.googleapis.com/v0/b/practice1-c2da2.appspot.com/o/delaney-van-unsplash.jpg?alt=media&token=24a96585-8f0c-484c-9740-1d104bf5ced3" class="fan" max-height="100px" max-width="190px"/>
+    </div>
+</body>
