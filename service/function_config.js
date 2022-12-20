@@ -3,7 +3,6 @@ const { messageRespone } = require('../ultis/messageRespone');
 require('dotenv').config();
 function AcceptIncomingReq(req,res,next){
     if(process.env.FRONT_END_TOKEN===req.headers.token){
-        
         next();
     }
     else{
