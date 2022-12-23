@@ -28,6 +28,14 @@ router.get("/by_id/:id", AcceptIncomingReq, function (req, res) {
 
   })
 });
+router.post("/addquanity/:id", function (req, res) {
+  const id = req.params.id;
+  Products.updateOne({_id:id},{$push:{newStocks:req.body.values},quanity:Number(req.body.values.quanity)},(err,data)=>{
+    console.log(err)
+
+    res.send(messageRespone(200, data))
+  })
+});
 router.post("/create", function (req, res) {
   Products.create({ ...req.body,quality:0 })
   res.send(messageRespone(200));
