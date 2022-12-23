@@ -286,6 +286,7 @@ router.post("/login_admin",AcceptIncomingReq,async(req,res)=>{
     return;
   }
   const {email,password}=req.body;
+  const hexPassword=crypto.createHash("sha256").update(newPassword).digest("hex");
   await Users.find({email:email,password:password,roles:"admin"},async (err,result)=>{
     if(err){
       console.log(err);
